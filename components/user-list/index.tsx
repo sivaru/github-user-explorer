@@ -7,7 +7,9 @@ interface UserSearchResultsProps {
   searchQuery: string;
 }
 
-export const UserList: React.FC<UserSearchResultsProps> = ({ searchQuery }) => {
+export const UserList: React.FC<UserSearchResultsProps> = ({
+  searchQuery,
+}: UserSearchResultsProps) => {
   const {
     data,
     fetchNextPage,

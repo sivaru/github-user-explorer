@@ -27,7 +27,7 @@ const SearchForm = () => {
         </Field.Root>
         <Button type="submit">Search</Button>
       </HStack>
-      {searchQuery && <UserList userName={searchQuery} />}
+      <UserList searchQuery={searchQuery} />
     </form>
   );
 };

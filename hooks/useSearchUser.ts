@@ -29,5 +29,6 @@ export function useSearchUser(userName: string) {
       return hasMore ? allPages.length + 1 : undefined;
     },
     initialPageParam: 1,
+    enabled: !!userName,
   });
 }
