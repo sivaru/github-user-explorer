@@ -1,6 +1,13 @@
 "use client";
 
-import { Flex, Link, Box, Heading, HStack, Spacer } from "@chakra-ui/react";
+import {
+  Flex,
+  Link as ChakraLink,
+  Box,
+  Heading,
+  HStack,
+  Spacer,
+} from "@chakra-ui/react";
 import NextLink from "next/link";
 
 export function NavBar() {
@@ -18,9 +25,6 @@ export function NavBar() {
       right={0}
       zIndex={10}
       bg="grey"
-      borderBottomWidth="1px"
-      borderBottomColor="gray.200"
-      boxShadow="sm"
     >
       <Flex
         align="center"
@@ -29,21 +33,21 @@ export function NavBar() {
         px={{ base: 4, md: 6 }}
         py={3}
       >
-        <NextLink href="/" passHref legacyBehavior>
-          <Link _hover={{ textDecoration: "none" }}>
+        <ChakraLink asChild _hover={{ textDecoration: "none" }}>
+          <NextLink href="/">
             <Heading size="md">GitHub User Explorer</Heading>
-          </Link>
-        </NextLink>
+          </NextLink>
+        </ChakraLink>
 
         <Spacer />
 
         <HStack>
-          <NextLink href="/" passHref legacyBehavior>
-            <Link {...linkProps}>Home</Link>
-          </NextLink>
-          <NextLink href="/favorites" passHref legacyBehavior>
-            <Link {...linkProps}>Favorites</Link>
-          </NextLink>
+          <ChakraLink asChild {...linkProps}>
+            <NextLink href="/">Home</NextLink>
+          </ChakraLink>
+          <ChakraLink asChild {...linkProps}>
+            <NextLink href="/favorites">Favorites</NextLink>
+          </ChakraLink>
         </HStack>
       </Flex>
     </Box>
