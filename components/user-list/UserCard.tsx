@@ -8,7 +8,7 @@ interface GitHubUserCardProps {
   userViewType?: string;
 }
 
-export const UserCard: React.FC<GitHubUserCardProps> = ({
+const UserCard: React.FC<GitHubUserCardProps> = ({
   avatarUrl,
   login,
   id,
@@ -76,3 +76,5 @@ export const UserCard: React.FC<GitHubUserCardProps> = ({
     </Box>
   );
 };
+
+export default UserCard;

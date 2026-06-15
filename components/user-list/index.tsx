@@ -1,26 +1,69 @@
+import { useRef, useEffect } from "react";
+import { Box, VStack, Text, Spinner, Button } from "@chakra-ui/react";
 import { useSearchUser } from "@/hooks/useSearchUser";
-import type { GitHubUser } from "@/types/github";
-import { UserCard } from "./UserCard";
-import { Grid } from "@chakra-ui/react";
+import UserCard from "./UserCard";
 
-const UserList = ({ userName }: { userName: string }) => {
-  const { data, isLoading, error } = useSearchUser(userName);
+interface UserSearchResultsProps {
+  searchQuery: string;
+}
 
-  if (!userName) {
-    return null;
-  }
+export const UserList: React.FC<UserSearchResultsProps> = ({ searchQuery }) => {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError,
+    error,
+  } = useSearchUser(searchQuery);
+
+  const observerTarget = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!observerTarget.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.1 },
+    );
+
+    observer.observe(observerTarget.current);
+
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
   if (isLoading) {
-    return <div>Loading...</div>;
-  }
-  if (error) {
-    return <div>Error: {error.message}</div>;
+    return (
+      <Box display="flex" justifyContent="center" p={8}>
+        <Spinner />
+      </Box>
+    );
   }
 
-  const items = data?.items ?? [];
+  if (isError) {
+    return (
+      <Box p={4} textAlign="center">
+        <Text color="red.500">Error: {(error as Error).message}</Text>
+      </Box>
+    );
+  }
+
+  const allUsers = data?.pages.flatMap((page) => page.items) || [];
+
   return (
-    <Grid templateColumns="repeat(auto-fill, minmax(320px, 1fr))" gap={6} p={4}>
-      {items.length > 0 ? (
-        items.map((user: GitHubUser) => (
+    <VStack gap={6} align="stretch">
+      <Box
+        display="grid"
+        gridTemplateColumns="repeat(auto-fill, minmax(320px, 1fr))"
+        gap={4}
+        mt={4}
+      >
+        {allUsers.map((user) => (
           <UserCard
             key={user.id}
             avatarUrl={user.avatar_url}
@@ -29,11 +72,20 @@ const UserList = ({ userName }: { userName: string }) => {
             type={user.type}
             userViewType={user.user_view_type}
           />
-        ))
-      ) : (
-        <div>No users found.</div>
-      )}
-    </Grid>
+        ))}
+      </Box>
+
+      {/* Infinite scroll trigger point */}
+      <Box ref={observerTarget} py={8} textAlign="center">
+        {isFetchingNextPage ? (
+          <Spinner />
+        ) : hasNextPage ? (
+          <Text color="gray.500">Scroll for more...</Text>
+        ) : (
+          <Text color="gray.500">No more users</Text>
+        )}
+      </Box>
+    </VStack>
   );
 };
 
