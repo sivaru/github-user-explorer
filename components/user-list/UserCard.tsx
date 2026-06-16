@@ -6,6 +6,9 @@ interface GitHubUserCardProps {
   id: number;
   type: string;
   userViewType?: string;
+  isFavorite: boolean;
+  saveFavorite?: () => void;
+  removeFavorite?: () => void;
 }
 
 const UserCard: React.FC<GitHubUserCardProps> = ({
@@ -14,6 +17,9 @@ const UserCard: React.FC<GitHubUserCardProps> = ({
   id,
   type,
   userViewType,
+  isFavorite = false,
+  saveFavorite,
+  removeFavorite,
 }) => {
   return (
     <Box
@@ -64,7 +70,6 @@ const UserCard: React.FC<GitHubUserCardProps> = ({
           </Text>
         </Box>
       </HStack>
-
       <Button
         w="full"
         variant="outline"
@@ -72,6 +77,15 @@ const UserCard: React.FC<GitHubUserCardProps> = ({
         onClick={() => window.open(`https://github.com/${login}`, "_blank")}
       >
         View Profile →
+      </Button>
+      <Button
+        mt={2}
+        w="full"
+        variant="outline"
+        size="sm"
+        onClick={() => (isFavorite ? removeFavorite?.() : saveFavorite?.())}
+      >
+        {isFavorite ? "Remove from Favorites " : "Add to Favorites ♥"}
       </Button>
     </Box>
   );

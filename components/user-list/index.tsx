@@ -2,6 +2,7 @@ import { useRef, useEffect } from "react";
 import { Box, VStack, Text, Spinner, Button } from "@chakra-ui/react";
 import { useSearchUser } from "@/hooks/useSearchUser";
 import UserCard from "./UserCard";
+import { useFavorites } from "@/hooks/useFavorites";
 
 interface UserSearchResultsProps {
   searchQuery: string;
@@ -21,6 +22,7 @@ export const UserList: React.FC<UserSearchResultsProps> = ({
   } = useSearchUser(searchQuery);
 
   const observerTarget = useRef<HTMLDivElement>(null);
+  const { isFavorite, saveFavorite, removeFavorite } = useFavorites();
 
   useEffect(() => {
     if (!observerTarget.current) return;
@@ -73,6 +75,9 @@ export const UserList: React.FC<UserSearchResultsProps> = ({
             id={user.id}
             type={user.type}
             userViewType={user.user_view_type}
+            isFavorite={isFavorite(user.id)}
+            saveFavorite={() => saveFavorite(user)}
+            removeFavorite={() => removeFavorite(user.id)}
           />
         ))}
       </Box>
